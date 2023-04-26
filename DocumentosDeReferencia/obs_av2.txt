@@ -1,0 +1,13 @@
+parser - lexica, sintatica e semantica (verificar ordem, se tá escrito correto)
+obs: usar regex, pois fica mais facil (verificar so dps as tabelas e se 
+os campos estão escritos corretamente)
+obs2: dicionario com as tabelas (se os campos que o usuario escreveu estão no dicionario)
+
+converter a expressao para algebra relacional *pd ser a parte* dps da verificacao do parser
+(mais interno - tabela que é a folha, e cada parentesa q sai é o nó)
+
+PI Nome( (Sigma Categoria.nome = "VIP"(Categoria)) |X|Cliente.CodCat = Categoria.codCat Cliente))
+quando encontro a junção, vou p outra "perna" do grafo
+
+
+retornar grafo com os nós com um numero do lado para indicar a ordem.
