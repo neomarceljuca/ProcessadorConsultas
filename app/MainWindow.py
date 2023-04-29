@@ -1,9 +1,12 @@
 import sys
 from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QLineEdit, QTextEdit, QVBoxLayout
+from parser import Parser
 
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.sql_query = ""
         
         # Criando a caixa de texto de entrada
         self.input_box = QLineEdit()
@@ -28,9 +31,11 @@ class MainWindow(QWidget):
     def process_input(self):
         # Processando a entrada do usuário
         input_text = self.input_box.text()
+        Parser.parser(self, "SELECT nome FROM funcionario;")
         output_text = "Você digitou: {}".format(input_text)
         self.output_box.append(output_text)
         self.input_box.clear()
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
