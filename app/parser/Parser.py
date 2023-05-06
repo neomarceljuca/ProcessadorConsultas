@@ -1,19 +1,18 @@
 import re
 from parser.validator import SQLQueryValidator
 
-
 def validate(sql_query):
     validator = SQLQueryValidator()
     return validator.validate_query(sql_query)
 
 def parser(sql_query):
     return
-    
 
 def sql_to_relational_algebra(query):
 
     pattern = r"SELECT\s+(.*?)\s+FROM\s+(.*)"
     pattern2 = r"FROM\s+(\w+)"
+    expr = ""
     unions = []
     selections = []
     conditions = []
@@ -21,8 +20,6 @@ def sql_to_relational_algebra(query):
     match = re.match(pattern, query)
     main_table = re.search(pattern2, query)
     
-    # print(match.group(1))
-    # print(main_table.group(1))
 
     # Se o pattern tiver match, ou seja se a base da query for SELECT * FROM ...;
     if match:
@@ -37,6 +34,7 @@ def sql_to_relational_algebra(query):
         # Procura os WHERE *;
         padrao_where = re.compile(r'WHERE\s+(.*)')
         wheres = padrao_where.findall(match.group(2))
+
 
         # Se tiver o padrão JOIN * ON * ...;
         if joins is not None:
@@ -53,16 +51,40 @@ def sql_to_relational_algebra(query):
                     unions.append(f"|X| {ondes.group(0)} {joins_[0][0]}")
         
         # Se tiver o padrão WHERE *;
-        if wheres is not None:
+        if len(wheres) > 0:
             conditions = []
-            conditions.append(f"sigma {wheres[0]} ({main_table.group(1)})")
+            conditions.append(f"sigma {wheres[0]}")
         
-        print(selections)
-        print(conditions)
-        print(unions)
+        # print(selections)
+        # print(conditions)
+        # print(conditions)
+
+        columns = ", ".join(selected_columns)
+        expr_union = ""
+
+        if unions:
+            expr_union = unions[0]
+            for i in range(1, len(unions)):
+                expr_union = f"({expr_union}) {unions[i]}"
+
+        if conditions and unions: 
+            expr = f"pi {columns} ({conditions[0]} ({expr_union}))"
+
+        if conditions and not unions: 
+            expr = f"pi {columns} ({conditions[0]})"
+
+        if not conditions and unions:
+            expr = f"pi {columns} ({expr_union})"
+
+        if not conditions and not unions:
+            expr = f"pi {columns} ({main_table.group(1)})"
+
+        print(expr)
         # print(selected_columns)
         # print(main_table.group(1))
 
 
-sql_to_relational_algebra("SELECT nome, datanascimento, descricao, saldoinicial FROM usuario JOIN contas ON usuario.idUsuario = contas.Usuario_idUsuario WHERE saldoinicial >=235 AND uf ='ce' AND cep <> '62930000';")
-# sql_to_relational_algebra("SELECT idusuario, nome, datanascimento, descricao, saldoinicial, UF, Descrição FROM usuario JOIN contas ON usuario.idUsuario = contas.Usuario_idUsuario JOIN tipoconta ON tipoconta.idTipoConta = contas.TipoConta_idTipoConta WHERE saldoinicial < 3000 AND uf = 'ce' AND Descrição <> 'Conta Corrente' AND idusuario > 3;")
+# sql_to_relational_algebra("SELECT nome, datanascimento, descricao, saldoinicial FROM usuario JOIN contas ON usuario.idUsuario = contas.Usuario_idUsuario WHERE saldoinicial >=235 AND uf ='ce' AND cep <> '62930000'")
+# sql_to_relational_algebra("SELECT idusuario, nome, datanascimento, descricao, saldoinicial, UF, Descrição FROM usuario JOIN contas ON usuario.idUsuario = contas.Usuario_idUsuario JOIN tipoconta ON tipoconta.idTipoConta = contas.TipoConta_idTipoConta")
+# sql_to_relational_algebra("SELECT a.column1, b.column2, c.column3, d.column4 FROM table1 JOIN table2 ON a.column1 = b.column2 JOIN table3 ON b.column2 = c.column3 JOIN table4 ON c.column3 = d.column4 WHERE a.column1 = 'value'")
+# sql_to_relational_algebra("SELECT nome, datanascimento, descricao, saldoinicial FROM usuario")
