@@ -1,21 +1,8 @@
 from validator import SQLQueryValidator
 
-# Sample dictionary of tables and fields
-table_fields = {
-    "users": ["id", "name", "email"],
-    "orders": ["id", "user_id", "product_id"],
-    "products": ["id", "name", "price"],
-
-    "Usuario": ["idUsuario", "Nome", "Logradouro", "Número", "Bairro", "CEP", "UF", "DataNascimento"],
-    "Contas": ["idConta", "Descricao", "TipoConta_idTipoConta", "Usuario_idUsuario", "SaldoInicial"],
-    "TipoConta": ["idTipoConta", "Descrição"],
-    "TipoMovimento": ["idTipoMovimento", "DescMovimentacao"],
-    "Categoria": ["idCategoria", "DescCategoria"],
-    "Movimentacao": ["idMovimentacao","DataMovimentacao","Descricao","TipoMovimento_idTipoMovimento","Categoria_idCategoria", "Contas_idConta"]
-}
-
 # Create SQL query validator instance
-validator = SQLQueryValidator(table_fields)
+validator = SQLQueryValidator()
+#parser = Parser()
 
 # Sample SQL queries to validate
 query1 = "Select id, name, email From users Where id = 1;"
@@ -32,3 +19,5 @@ print(validator.validate_query(query3))  # True
 print(validator.validate_query(query4))  # True
 print(validator.validate_query(query5))  # True
 print(validator.validate_query(query6))  # True
+
+

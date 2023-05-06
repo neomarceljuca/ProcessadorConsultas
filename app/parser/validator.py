@@ -3,8 +3,22 @@ from itertools import chain
 
 
 class SQLQueryValidator:
-    def __init__(self, table_fields):
-        self.table_fields = table_fields
+    def __init__(self): 
+        # Sample dictionary of tables and fields
+        self.table_fields =  {
+            "users": ["id", "name", "email"],
+            "orders": ["id", "user_id", "product_id"],
+            "products": ["id", "name", "price"],
+
+            "Usuario": ["idUsuario", "Nome", "Logradouro", "Número", "Bairro", "CEP", "UF", "DataNascimento"],
+            "Contas": ["idConta", "Descricao", "TipoConta_idTipoConta", "Usuario_idUsuario", "SaldoInicial"],
+            "TipoConta": ["idTipoConta", "Descrição"],
+            "TipoMovimento": ["idTipoMovimento", "DescMovimentacao"],
+            "Categoria": ["idCategoria", "DescCategoria"],
+            "Movimentacao": ["idMovimentacao","DataMovimentacao","Descricao","TipoMovimento_idTipoMovimento","Categoria_idCategoria", "Contas_idConta"]
+        }
+
+
         self.table_pattern = r"\b(" + "|".join(self.table_fields.keys()) + r")\b"
         self.field_pattern = (
             r"(?<!\w)("
@@ -40,8 +54,8 @@ class SQLQueryValidator:
 
         #Verifica se a quantidade de campos eh multiplo da quantidade de tabelas
         field_matches = [match.group() for match in re.finditer(self.field_pattern, sql_query)]
-        if len(field_matches) % len(table_matches) != 0:
-            return False
+        #if len(field_matches) % len(table_matches) != 0:
+        #    return False
 
         # Verifica se todos os campos na consulta existem no dicionário de campos válidos
         for field, table in zip(field_matches, table_matches):

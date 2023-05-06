@@ -1,7 +1,14 @@
 import re
+from parser.validator import SQLQueryValidator
 
 
-# def parser(sql_query):
+def validate(sql_query):
+    validator = SQLQueryValidator()
+    return validator.validate_query(sql_query)
+
+def parser(sql_query):
+    return
+    
 
 def sql_to_relational_algebra(query):
 

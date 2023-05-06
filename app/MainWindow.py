@@ -1,6 +1,10 @@
+
 import sys
-from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QLineEdit, QTextEdit, QVBoxLayout
 from parser import Parser
+
+from PySide6.QtWidgets import (QApplication, QLineEdit, QPushButton, QTextEdit,
+                               QVBoxLayout, QWidget)
+
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -31,8 +35,13 @@ class MainWindow(QWidget):
     def process_input(self):
         # Processando a entrada do usuário
         input_text = self.input_box.text()
-        Parser.parser(input_text)
+        validated = Parser.validate(input_text)
         output_text = "Você digitou: {}".format(input_text)
+        if validated:
+            output_text += "\n Consulta Validada"
+            #TO DO: adicionar output do grafo da consulta
+        else:
+            output_text += "\n Consulta Invalida!"
         self.output_box.append(output_text)
         self.input_box.clear()
 
@@ -41,4 +50,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
