@@ -12,10 +12,15 @@ class SQLQueryValidator:
             + r")(?!\w)"
         )
 
-        self.operator_pattern = r"(\s+(?:AND|OR)\s+)+"
-        self.query_pattern = r"SELECT\s+({0}(?:\s*,\s*{0})*)\s+FROM\s+({1})(?:\s+WHERE\s+(.+?))?(?:\s+ORDER\s+BY\s+(.+))?;".format(
-            self.field_pattern, self.table_pattern
-        )
+        self.operator_pattern = r"(?i)(\s+(?:AND|OR)\s+)+"
+        
+        #self.query_pattern = r"(?i)SELECT\s+(?P<fields>{0}(?:\s*,\s*{0})*)\s+FROM\s+(?P<tables>{1})\s+(?P<join>JOIN\s+{1}\s+ON.+?)?(?:\s+WHERE\s+(?P<conditions>.+?))?(?:\s+ORDER\s+BY\s+(?P<order_by>.+))?;".format(self.field_pattern, self.table_pattern)
+
+        #JoinOld
+        self.query_pattern = r"(?i)SELECT\s+({0}(?:\s*,\s*{0})*)\s+FROM\s+({1})(?:\s+(?:JOIN|INNER JOIN|LEFT JOIN|RIGHT JOIN|FULL OUTER JOIN)\s+({1})\s+ON\s+(.+?))?(?:\s+WHERE\s+(.+?))?(?:\s+ORDER\s+BY\s+(.+))?;".format(self.field_pattern, self.table_pattern)
+       
+        #Old
+        #self.query_pattern = r"(?i)SELECT\s+({0}(?:\s*,\s*{0})*)\s+FROM\s+({1})(?:\s+WHERE\s+(.+?))?(?:\s+ORDER\s+BY\s+(.+))?;".format(self.field_pattern, self.table_pattern)
 
 
     def validate_query(self, sql_query):
