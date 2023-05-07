@@ -1,5 +1,5 @@
 import re
-from parser.validator import SQLQueryValidator
+# from parser.validator import SQLQueryValidator
 
 def validate(sql_query):
     validator = SQLQueryValidator()
@@ -93,22 +93,12 @@ def sql_to_relational_algebra(query):
             print(expr)
             strictly_cols = cols + selected_columns
             strictly_cols = list(set(strictly_cols))
-            # print(f"colunas: {cols}")
-            # print(f"colunas principais: {selected_columns}")
-            # print(f"condição: {conditions[0]}")
+            print(f"colunas: {cols}")
+            print(f"colunas principais: {selected_columns}")
+            print(f"condição: {conditions[0]}")
             print(f"colunas estritamente necessárias: {strictly_cols}")
-            # print(f"tabelas: {tables}")
-
-            # print(conditions[0])
-            tabela_coluna_regex = r'([a-zA-Z_]+\w*)(?:\.([a-zA-Z_]+\w*))?'
-            tabelas_colunas = re.findall(tabela_coluna_regex, conditions[0])
-
-            # print(f"expressão união: {expr_union}")
-
-            # pega as tabelas que tem na condição e compara com as que existe na uniao
-            # tabelas1 = set([x[0] for x in tabelas_colunas if x[0] != ''])
-            # tabelas2 = set(re.findall(r'[Tt][a-zA-Z0-9_]+', expr_union))
-            # tabelas_comuns = list(tabelas1.intersection(tabelas2))
+            print(f"tabelas: {tables}")
+            print(f"expressão união: {expr_union}")
 
 
             sigma_split = conditions[0].split("sigma")
@@ -131,7 +121,6 @@ def sql_to_relational_algebra(query):
                         # print(f"{expr_union_v2[i]} está em {and_split[j]} onde a posiçao é {i} para o array expr_union_v2 e {j} para o array and_split")
                         a_[i] = a_[i] +"^"+ and_split[j] if a_[i] != None else f"{and_split[j]}"
                         flag = True
-                    # if tables.__contains__(expr_union_v2[i]):
                         for x in strictly_cols:
                             a = x.split(".")
                             if expr_union_v2[i] in a[0]:
@@ -142,7 +131,7 @@ def sql_to_relational_algebra(query):
                     for x in strictly_cols:
                         a = x.split(".")
                         if expr_union_v2[i] in a[0]:
-                            print(f"tabela {expr_union_v2[i]} precisa das colunas {x}")
+                            # print(f"tabela {expr_union_v2[i]} precisa das colunas {x}")
                             b_.append(x)
                                 
     
@@ -159,9 +148,6 @@ def sql_to_relational_algebra(query):
                         _b_ = ", ".join(b_)
                         expr_union_v2[i] = f" ( pi {_b_} ( {expr_union_v2[i]} ) ) "
                         b_.clear()
-                    # if len(b_) > 0:
-                    #     _b_ = ", ".join(b_)
-                    #     expr_union_v2[i] = f" ( pi {_b_} ( {expr_union_v2[i]} ) ) "
 
 
             # print(f"{a_}")
@@ -170,28 +156,66 @@ def sql_to_relational_algebra(query):
             # print(f"{expr_union_v2}")
             expr = f"pi {columns} ( {expr_union_v2} )"
 
-            print(expr)
+            # print(expr)
             
 
         if conditions and not unions: 
-            expr = f"pi {columns} ({conditions[0]})"
+            expr = f"pi {columns} ( {conditions[0]} ( {main_table.group(1)} ) )"
+            print(expr)
 
         if not conditions and unions:
             expr = f"pi {columns} ({expr_union})"
+            print(expr)
+            strictly_cols = cols + selected_columns
+            strictly_cols = list(set(strictly_cols))
+            # print(f"colunas: {cols}")
+            # print(f"colunas principais: {selected_columns}")
+            # print(f"colunas estritamente necessárias: {strictly_cols}")
+            # print(f"tabelas: {tables}")
+            # print(f"expressão união: {expr_union}")
+
+            expr_union_v2 = expr_union.split(" ")
+            b_ = []
+            for i in range(len(expr_union_v2)):
+                if tables.__contains__(expr_union_v2[i]):
+                    # print(f"{expr_union_v2[i]} é uma tabela")
+                    for x in strictly_cols:
+                        a = x.split(".")
+                        if expr_union_v2[i] in a[0]:
+                            # print(f"tabela {expr_union_v2[i]} precisa das colunas {x}")
+                            b_.append(x)
+                
+                if len(b_) > 0:
+                        _b_ = ", ".join(b_)
+                        expr_union_v2[i] = f" ( pi {_b_} ( {expr_union_v2[i]} ) ) "
+                        b_.clear()
+            expr_union_v2 = " ".join(expr_union_v2)
+            # print(expr_union_v2)
+            expr = f"pi {columns} ( {expr_union_v2} )"
+            print(expr)
+
+
 
         if not conditions and not unions:
             expr = f"pi {columns} ({main_table.group(1)})"
-
+            print(expr)
+            
         # print(expr)
-        # print(selected_columns)
-        # print(main_table.group(1))
 
 
-sql_to_relational_algebra("SELECT usuario.nome, usuario.datanascimento, contas.descricao, contas.saldoinicial FROM usuario JOIN contas ON usuario.idUsuario = contas.Usuario_idUsuario WHERE contas.saldoinicial >= 235 AND usuario.uf = 'ce' AND usuario.cep <> '62930000'")
+# sql_to_relational_algebra("SELECT usuario.nome, usuario.datanascimento, contas.descricao, contas.saldoinicial FROM usuario JOIN contas ON usuario.idUsuario = contas.Usuario_idUsuario WHERE contas.saldoinicial >= 235 AND usuario.uf = 'ce' AND usuario.cep <> '62930000'")
 print("--------")
-# sql_to_relational_algebra("SELECT idusuario, nome, datanascimento, descricao, saldoinicial, UF, Descrição FROM usuario JOIN contas ON usuario.idUsuario = contas.Usuario_idUsuario JOIN tipoconta ON tipoconta.idTipoConta = contas.TipoConta_idTipoConta")
-sql_to_relational_algebra("SELECT table1.column1, table2.column2, table3.column3, table4.column4 FROM table1 JOIN table2 ON table1.column1 = table2.column2 JOIN table3 ON table2.column2 = table3.column3 JOIN table4 ON table3.column3 = table4.column4 WHERE table1.column1 = 'value'")
-print("--------")
+# sql_to_relational_algebra("SELECT usuario.idusuario, nome, datanascimento, descricao, saldoinicial, UF, Descrição FROM usuario JOIN contas ON usuario.idUsuario = contas.Usuario_idUsuario JOIN tipoconta ON tipoconta.idTipoConta = contas.TipoConta_idTipoConta")
+# sql_to_relational_algebra("SELECT table1.column1, table2.column2, table3.column3, table4.column4 FROM table1 JOIN table2 ON table1.column1 = table2.column2 JOIN table3 ON table2.column2 = table3.column3 JOIN table4 ON table3.column3 = table4.column4 WHERE table1.column1 = 'value'")
+
 # sql_to_relational_algebra("SELECT nome, datanascimento, descricao, saldoinicial FROM usuario")
-sql_to_relational_algebra("SELECT tb1.Nome, tb3.sal FROM tb1 JOIN tb2 ON tb1.pk = tb2.fk JOIN tb3 ON tb2.pk = tb3.fk WHERE tb1.id > 300 AND tb3.sal <> 0")
+# sql_to_relational_algebra("SELECT tb1.Nome, tb3.sal FROM tb1 JOIN tb2 ON tb1.pk = tb2.fk JOIN tb3 ON tb2.pk = tb3.fk WHERE tb1.id > 300 AND tb3.sal <> 0")
 # sql_to_relational_algebra("SELECT tb1.Nome, tb1.cpf, tb3.sal, tb2.coluna FROM tb1 JOIN tb2 ON tb1.pk = tb2.fk JOIN tb3 ON tb2.pk = tb3.fk WHERE tb1.id > 300 AND tb3.sal <> 0")
+# sql_to_relational_algebra("SELECT usuario.nome, contas.saldo FROM usuario JOIN contas ON usuario.id = contas.fk WHERE usuario.nome <> 'francisco'")
+# sql_to_relational_algebra("SELECT usuario.nome, contas.saldo FROM usuario JOIN contas ON usuario.id = contas.fk")
+# print("--------")
+# sql_to_relational_algebra("SELECT usuario.nome, contas.saldo, table3.col3 FROM usuario JOIN contas ON usuario.id = contas.fk JOIN table3 ON contas.pk = table3.col3")
+# sql_to_relational_algebra("SELECT usuario.nome FROM usuario JOIN contas ON usuario.id = contas.fk JOIN table3 ON contas.pk = table3.col3")
+sql_to_relational_algebra("SELECT usuario.nome FROM usuario WHERE usuario.id > 300 AND usuario.nome <> 'Josef'")
+print("--------")
+sql_to_relational_algebra("SELECT nome FROM usuario")
