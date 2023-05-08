@@ -1,0 +1,14 @@
+// Tree Graph
+digraph {
+	A
+	B
+	C
+	D
+	E
+	F
+	A -> "Long long text example"
+	A -> C
+	B -> D
+	B -> E
+	C -> F
+}
