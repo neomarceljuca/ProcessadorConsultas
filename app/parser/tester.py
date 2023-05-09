@@ -1,5 +1,5 @@
 from validator import SQLQueryValidator
-from app.util.util import sql_to_relational_algebra
+from app.util.util import sql_to_relational_algebra, apply_heuristics
 
 # Create SQL query validator instance
 validator = SQLQueryValidator()
@@ -16,17 +16,19 @@ query6 = "SELECT idUsuario FROM Usuario;"
 
 # Relational Algebra Parser Test
 print("1")
-print(sql_to_relational_algebra(query1))
-print("2")
-print(sql_to_relational_algebra(query2))
-print("3")
-print(sql_to_relational_algebra(query3))
-print("4")
-print(sql_to_relational_algebra(query4))
-print("5")
-print(sql_to_relational_algebra(query5))
-print("6")
-print(sql_to_relational_algebra(query6))
+rel_alg = sql_to_relational_algebra(query1)
+print(rel_alg)
+print(apply_heuristics(rel_alg))
+# print("2")
+# print(sql_to_relational_algebra(query2))
+# print("3")
+# print(sql_to_relational_algebra(query3))
+# print("4")
+# print(sql_to_relational_algebra(query4))
+# print("5")
+# print(sql_to_relational_algebra(query5))
+# print("6")
+# print(sql_to_relational_algebra(query6))
 
 
 # # Validate SQL queries
