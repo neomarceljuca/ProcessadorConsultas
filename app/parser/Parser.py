@@ -1,5 +1,5 @@
 import re
-# from parser.validator import SQLQueryValidator
+from app.parser.validator import SQLQueryValidator
 
 def validate(sql_query):
     validator = SQLQueryValidator()

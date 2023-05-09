@@ -1,6 +1,6 @@
 
 import sys
-from parser import Parser
+from app.parser import Parser
 
 from PySide6.QtWidgets import (QApplication, QLineEdit, QPushButton, QTextEdit,
                                QVBoxLayout, QWidget)
