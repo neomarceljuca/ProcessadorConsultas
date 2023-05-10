@@ -1,4 +1,24 @@
-// Query Tree Graph
+// Tree Graph
 digraph {
-	root
+	"PiTb1.Nome,tb3.sal"
+	"|X|tb2.pk=tb3.fk"
+	"|X|Tb1.pk=tb2.fk"
+	"PiPk,nome"
+	"Sigmatb1.id>300"
+	Tb1
+	"PiPk,fk"
+	Tb2
+	"PiSal,fk"
+	"Sigmatb3.sal<>0"
+	Tb
+	"PiTb1.Nome,tb3.sal" -> "|X|tb2.pk=tb3.fk"
+	"|X|tb2.pk=tb3.fk" -> "|X|Tb1.pk=tb2.fk"
+	"|X|Tb1.pk=tb2.fk" -> "PiPk,nome"
+	"PiPk,nome" -> "Sigmatb1.id>300"
+	"Sigmatb1.id>300" -> Tb1
+	"|X|Tb1.pk=tb2.fk" -> "PiPk,fk"
+	"PiPk,fk" -> Tb2
+	"|X|tb2.pk=tb3.fk" -> "PiSal,fk"
+	"PiSal,fk" -> "Sigmatb3.sal<>0"
+	"Sigmatb3.sal<>0" -> Tb
 }

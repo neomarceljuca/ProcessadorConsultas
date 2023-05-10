@@ -11,6 +11,7 @@ class TreeGraph:
         self.output_path = output_path
         self.dot = Digraph(comment= "Query Tree Graph")
         self.inputExpression = inputExpression
+        self.tree = Tree()
         
     def generate_tree(self):
         dot = Digraph(comment='Tree Graph')
@@ -20,23 +21,6 @@ class TreeGraph:
             dot.edge(edge[0], edge[1])
         dot.render(self.output_path, format='png')
 
-    #query tree generation
-    def generate_queryTree(self):
-        #self.dot = Digraph(comment= "Query Tree Graph")
-        self.recursiveQueryTree(self.inputExpression)
-        self.dot.render(self.output_path, format='png')
-
-    def recursiveQueryTree(self, expression):
-        if expression.isspace():
-            return
-        else:
-            #remove string outside brackets
-            trimmedExpression, remainingExpression = treatString(expression)
-            
-            #if there is brackets in the entire expression, remove first and last brackets
-            #call recursiveQueryTree(modifiedExpresion) and possibly branch in case of join clause
-
-    #aux methods
     def treatString(self, expression):
         remainder = []
         trimmedExpression = ""
@@ -50,8 +34,8 @@ class TreeGraph:
             if character == '(':
                 if trimmedExpression != "": #found other opening brackets but already have a trimmedExpression; split expression and return
                     if (not expression[:indexToBeginningOfTrimmed].isspace()) and expression[:indexToBeginningOfTrimmed] != "":
-                        remainder.append(expression[:indexToBeginningOfTrimmed])
-                    remainder.append(expression[i:])
+                        remainder.append(expression[:indexToBeginningOfTrimmed].strip())
+                    remainder.append(expression[i:].strip())
                     break
                 else:
                     stack.append(character)
@@ -71,39 +55,104 @@ class TreeGraph:
         if expression != "" and trimmedExpression == "": 
             return ( self.treatString(str(expression[1:-1])) )  #execute again with outter brackets trimmed
         if trimmedExpression != "" and remainder == []: #trimmedExpression was at the very end of the input
-            remainder.append(expression[:indexToBeginningOfTrimmed])
+            if expression[:indexToBeginningOfTrimmed] != "":
+                remainder.append(expression[:indexToBeginningOfTrimmed].strip())
 
         return trimmedExpression, remainder
+
+    #query tree generation
+    def generate_queryTree(self):
+        #self.dot = Digraph(comment= "Query Tree Graph")
+        self.recursiveQueryTree(self.inputExpression)
+        #self.tree.print_tree()
+        self.nodes, self.edges = self.tree.to_dot()
+        self.generate_tree()
+        #self.dot.render(self.output_path, format='png')
+
+    def recursiveQueryTree(self, expression):
+        if expression.isspace():
+            return None
+        else:
+            #remove string outside brackets
+            trimmedExpression, remainder = self.treatString(expression)
+            #call recursiveQueryTree(modifiedExpresion) and possibly branch in case of join clause
+            if trimmedExpression == "":
+                return None
+            #self.dot.node(trimmedExpression)
+            createdNode = TreeNode(trimmedExpression)
+            if self.tree.get_root() == None:
+                self.tree.set_root(createdNode)
+            for remainderString in remainder:
+                if trimmedExpression != "" and remainderString != "":
+                    createdNode.add_child(self.recursiveQueryTree(remainderString))
+                    #newEdge = self.dot.edge(parentNode, self.recursiveQueryTree(createdNode, remainderString))
+            return createdNode
+        
+class TreeNode:
+    def __init__(self, value=None):
+        self.value = value
+        self.children = []
     
+    def add_child(self, node):
+        self.children.append(node)
+    
+    def remove_child(self, node):
+        self.children.remove(node)
+    
+    def get_children(self):
+        return self.children
+    
+    def get_value(self):
+        return self.value
+    
+    def set_value(self, value):
+        self.value = value
 
-    # def GPTtreatString(expression):
-    #     if '(' not in expression and ')' not in expression:
-    #         return expression, []
 
-    #     stack = []
-    #     trimmedExpression = ""
-    #     remainingExpressions = []
-    #     i = 0
-    #     while i < len(expression):
-    #         if expression[i] == '(':
-    #             stack.append('(')
-    #             if trimmedExpression == "" and len(stack) == 1:
-    #                 trimmedExpression = expression[:i].strip()
-    #                 expression = expression[i:]
-    #                 i = -1
-    #         elif expression[i] == ')':
-    #             if stack and stack[-1] == '(':
-    #                 stack.pop()
-    #             if not stack and trimmedExpression == "":
-    #                 trimmedExpression = expression[:i+1].strip()
-    #                 expression = expression[i+1:]
-    #                 i = -1
-    #         i += 1
+class Tree:
+    def __init__(self, root=None):
+        self.root = root
+    
+    def set_root(self, node):
+        self.root = node
+    
+    def get_root(self):
+        return self.root
+    
+    def depth_first_traversal(self):
+        visited = []
+        self._depth_first_traversal(self.root, visited)
+        return visited
+    
+    def _depth_first_traversal(self, node, visited):
+        visited.append(node.get_value())
+        children = node.get_children()
+        for child in children:
+            self._depth_first_traversal(child, visited)
+    def print_tree(self):
+        self._print_tree(self.root, "")
+    
+    def _print_tree(self, node, prefix):
+        if node is None:
+            return
+        
+        print(prefix + node.get_value())
+        children = node.get_children()
+        for i, child in enumerate(children):
+            if i == len(children) - 1:
+                self._print_tree(child, prefix + "    ")
+            else:
+                self._print_tree(child, prefix + "│   ")
 
-    #     if trimmedExpression and trimmedExpression[0] == '(' and trimmedExpression[-1] == ')':
-    #         return treatString(trimmedExpression[1:-1])
-
-    #     if expression:
-    #         remainingExpressions.append(expression)
-
-    #     return trimmedExpression, remainingExpressions
+    def to_dot(self):
+        nodes = []
+        edges = []
+        self._to_dot(self.root, nodes, edges)
+        return nodes, edges
+    
+    def _to_dot(self, node, nodes, edges):
+        nodes.append(f"{node.get_value()}")
+        children = node.get_children()
+        for child in children:
+            edges.append((f"{node.get_value()}", f"{child.get_value()}"))
+            self._to_dot(child, nodes, edges)
