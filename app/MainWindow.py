@@ -69,10 +69,7 @@ class MainWindow(QWidget):
         inputString = "Pi Tb1.Nome, tb3.sal ( ((( (Pi Pk, nome(Sigma tb1.id > 300(Tb1))) |X| Tb1.pk = tb2.fk (Pi Pk,fk(Tb2))) |X| tb2.pk = tb3.fk (Pi Sal, fk((Sigma tb3.sal <> 0 (Tb3)))))))"
         #inputString = "( (A(B(C))) D (E(F))) G (H((I (J))))"
         
-        # Create a list of nodes
-        #nodes = ['A', 'B', 'C', 'D', 'E', 'F']
-        # Create a list of edges
-        #edges = [('A', 'Long long text example'), ('A', 'C'), ('B', 'D'), ('B', 'E'), ('C', 'F')]
+       
         
         # Specify the output path
         output_path = './app/RelationalTree'

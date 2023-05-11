@@ -6,8 +6,6 @@ from graphviz import Digraph
 
 class TreeGraph:
     def __init__(self, inputExpression, output_path):
-        #self.nodes
-        #self.edges
         self.output_path = output_path
         self.dot = Digraph(comment= "Query Tree Graph")
         self.inputExpression = inputExpression
@@ -73,19 +71,17 @@ class TreeGraph:
         if expression.isspace():
             return None
         else:
-            #remove string outside brackets
+            #split string outside brackets from remaining expression
             trimmedExpression, remainder = self.treatString(expression)
             #call recursiveQueryTree(modifiedExpresion) and possibly branch in case of join clause
             if trimmedExpression == "":
                 return None
-            #self.dot.node(trimmedExpression)
             createdNode = TreeNode(trimmedExpression)
             if self.tree.get_root() == None:
                 self.tree.set_root(createdNode)
             for remainderString in remainder:
                 if trimmedExpression != "" and remainderString != "":
                     createdNode.add_child(self.recursiveQueryTree(remainderString))
-                    #newEdge = self.dot.edge(parentNode, self.recursiveQueryTree(createdNode, remainderString))
             return createdNode
         
 class TreeNode:
@@ -129,22 +125,12 @@ class Tree:
         children = node.get_children()
         for child in children:
             self._depth_first_traversal(child, visited)
-    def print_tree(self):
-        self._print_tree(self.root, "")
-    
-    def _print_tree(self, node, prefix):
-        if node is None:
-            return
-        
-        print(prefix + node.get_value())
-        children = node.get_children()
-        for i, child in enumerate(children):
-            if i == len(children) - 1:
-                self._print_tree(child, prefix + "    ")
-            else:
-                self._print_tree(child, prefix + "│   ")
 
     def to_dot(self):
+        # Example list of nodes
+        #nodes = ['A', 'B', 'C', 'D', 'E', 'F']
+        # Example list of edges
+        #edges = [('A', 'B'), ('A', 'C'), ('B', 'D'), ('B', 'E'), ('C', 'F')]
         nodes = []
         edges = []
         self._to_dot(self.root, nodes, edges)
