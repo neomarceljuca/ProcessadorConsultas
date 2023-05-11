@@ -65,7 +65,6 @@ class SQLParser:
             i += 1
             if i > len(self.tokens) -1:
                 break
-                #return From(tables)
         self.parse_tables(tables)
         return From(tables)
 
@@ -124,15 +123,7 @@ class SQLParser:
 
     def parse_columns(self, columns):
         for column in columns:
-            #Formatando colunas
-            # if "." in column:
-            #     continue
-            # table_names = table_fields.keys()
-
-            # for table_name in table_names:
-            #     pass
-            #     # if table_name 
-
+            column = column.split('.')[1]  if '.' in column else column
             found = False
             for fields in table_fields.values():
                 if column.lower()  in fields:

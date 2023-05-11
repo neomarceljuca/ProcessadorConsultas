@@ -1,36 +1,22 @@
 // Tree Graph
 digraph {
-	"pitb1.nome,tb3.sal"
-	"|X|tb4.pk=tb5.fk"
-	"|X|tb3.pk=tb4.fk"
-	"|X|tb2.pk=tb3.fk"
-	"|X|tb1.pk=tb2.fk"
-	"pitb1.pk,tb1.nome"
-	"sigmatb1.id>300"
-	tb1
-	"pitb2.pk,tb2.fk"
-	tb2
-	"pitb3.sal,tb3.fk,tb3.pk"
-	"sigmatb3.sal<>0"
-	tb3
-	"pitb4.pk,tb4.fk"
-	tb4
-	"pitb5.fk"
-	tb5
-	"pitb1.nome,tb3.sal" -> "|X|tb4.pk=tb5.fk"
-	"|X|tb4.pk=tb5.fk" -> "|X|tb3.pk=tb4.fk"
-	"|X|tb3.pk=tb4.fk" -> "|X|tb2.pk=tb3.fk"
-	"|X|tb2.pk=tb3.fk" -> "|X|tb1.pk=tb2.fk"
-	"|X|tb1.pk=tb2.fk" -> "pitb1.pk,tb1.nome"
-	"pitb1.pk,tb1.nome" -> "sigmatb1.id>300"
-	"sigmatb1.id>300" -> tb1
-	"|X|tb1.pk=tb2.fk" -> "pitb2.pk,tb2.fk"
-	"pitb2.pk,tb2.fk" -> tb2
-	"|X|tb2.pk=tb3.fk" -> "pitb3.sal,tb3.fk,tb3.pk"
-	"pitb3.sal,tb3.fk,tb3.pk" -> "sigmatb3.sal<>0"
-	"sigmatb3.sal<>0" -> tb3
-	"|X|tb3.pk=tb4.fk" -> "pitb4.pk,tb4.fk"
-	"pitb4.pk,tb4.fk" -> tb4
-	"|X|tb4.pk=tb5.fk" -> "pitb5.fk"
-	"pitb5.fk" -> tb5
+	"piidusuario,nome,datanascimento,descricao,saldoinicial,uf,descrição"
+	"|X|tipoconta.idtipoconta=contas.tipoconta_idtipoconta"
+	"|X|usuario.idusuario=contas.usuario_idusuario"
+	"piidusuario,usuario.idusuario"
+	"sigmaidusuario>3;"
+	usuario
+	"picontas.usuario_idusuario,contas.tipoconta_idtipoconta"
+	contas
+	"pitipoconta.idtipoconta"
+	tipoconta
+	"piidusuario,nome,datanascimento,descricao,saldoinicial,uf,descrição" -> "|X|tipoconta.idtipoconta=contas.tipoconta_idtipoconta"
+	"|X|tipoconta.idtipoconta=contas.tipoconta_idtipoconta" -> "|X|usuario.idusuario=contas.usuario_idusuario"
+	"|X|usuario.idusuario=contas.usuario_idusuario" -> "piidusuario,usuario.idusuario"
+	"piidusuario,usuario.idusuario" -> "sigmaidusuario>3;"
+	"sigmaidusuario>3;" -> usuario
+	"|X|usuario.idusuario=contas.usuario_idusuario" -> "picontas.usuario_idusuario,contas.tipoconta_idtipoconta"
+	"picontas.usuario_idusuario,contas.tipoconta_idtipoconta" -> contas
+	"|X|tipoconta.idtipoconta=contas.tipoconta_idtipoconta" -> "pitipoconta.idtipoconta"
+	"pitipoconta.idtipoconta" -> tipoconta
 }
