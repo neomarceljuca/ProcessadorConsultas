@@ -9,11 +9,10 @@ Join = namedtuple("Join", ["table", "condition"])
 
 table_fields ={
             "*":["*"],
-            "users": ["id", "name", "email"],
-            "orders": ["id", "user_id", "product_id"],
-            "products": ["id", "name", "price"],
-
-           "usuario": ["idusuario", "nome", "logradouro", "número", "bairro", "cep", "uf", "datanascimento"],
+            # "users": ["id", "name", "email"],
+            # "orders": ["id", "user_id", "product_id"],
+            # "products": ["id", "name", "price"],
+            "usuario": ["idusuario", "nome", "logradouro", "número", "bairro", "cep", "uf", "datanascimento"],
             "contas": ["idconta", "descricao", "tipoconta_idtipoconta", "usuario_idusuario", "saldoinicial"],
             "tipoconta": ["idtipoconta", "descrição"],
             "tipomovimento": ["idtipomovimento", "descmovimentacao"],
@@ -125,6 +124,15 @@ class SQLParser:
 
     def parse_columns(self, columns):
         for column in columns:
+            #Formatando colunas
+            # if "." in column:
+            #     continue
+            # table_names = table_fields.keys()
+
+            # for table_name in table_names:
+            #     pass
+            #     # if table_name 
+
             found = False
             for fields in table_fields.values():
                 if column.lower()  in fields:

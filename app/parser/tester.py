@@ -20,6 +20,9 @@ validator = SQLQueryValidator()
 # print(validator.validate_query(query5))  # True
 # print(validator.validate_query(query6))  # True
 
+
+#test1 Select Tb1.Nome, tb3.sal From Tb1 Join Tb2 on tb1.pk = tb2.fk Join tb3 on tb2.pk = tb3.fk Where tb1.id > 300 and tb3.sal <> 0;
+
 inputString = "	( (A(B(C))) D (E(F))) G (H((I (J))))"
 output_path = './app/RelationalTree'
 #Create a TreeGraph object, generate and export the graph as 'RelationalTree.png'

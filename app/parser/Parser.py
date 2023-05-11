@@ -1,6 +1,6 @@
 import re
-from parser.validator import SQLQueryValidator
 
+# from parser.validator import SQLQueryValidator
 
 def validate(sql_query):
     validator = SQLQueryValidator()
@@ -196,12 +196,11 @@ def sql_to_relational_algebra(query):
             print(expr)
 
 
-
         if not conditions and not unions:
             expr = f"pi {columns} ({main_table.group(1)})"
             print(expr)
             
-        # print(expr)
+        return expr
 
 
 # sql_to_relational_algebra("SELECT usuario.nome, usuario.datanascimento, contas.descricao, contas.saldoinicial FROM usuario JOIN contas ON usuario.idUsuario = contas.Usuario_idUsuario WHERE contas.saldoinicial >= 235 AND usuario.uf = 'ce' AND usuario.cep <> '62930000'")

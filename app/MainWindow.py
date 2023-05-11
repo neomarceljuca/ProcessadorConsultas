@@ -11,6 +11,7 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (QApplication, QGraphicsScene, QGraphicsTextItem,
                                QGraphicsView, QLabel, QLineEdit, QPushButton,
                                QTextEdit, QVBoxLayout, QWidget)
+from sql_parser import SQLParser
 
 
 class MainWindow(QWidget):
@@ -36,7 +37,7 @@ class MainWindow(QWidget):
         self.pixmap = QPixmap(image_path)
         
         self.label.setPixmap(self.pixmap)
-        self.label.setMaximumSize(QSize(1000, 1000))
+        self.label.setMaximumSize(QSize(1400, 1000))
         
         # Criando o layout
         layout = QVBoxLayout()
@@ -51,22 +52,35 @@ class MainWindow(QWidget):
     def process_input(self):
         # Processando a entrada do usuário
         input_text = self.input_box.text()
-        validated = Parser.validate(input_text)
-        self.output_box.clear()
-        output_text = "Você digitou: {}".format(input_text)
-        if validated:
-            output_text += "\n Consulta Validada"
-            #TO DO: adicionar corretamente o output do grafo da consulta
-            self.generateGraphExample()
-        else:
-            output_text += "\n Consulta Invalida!"
+
+
+        #validated = Parser.validate(input_text)
+        try:
+            parser = SQLParser(input_text)
+            parsed_query = parser.parse()
+
+            self.output_box.clear()
+            output_text = "Você digitou: {}".format(input_text)
+            # if validated:
+            #     output_text += "\n Consulta Validada"
+            #     self.generateGraphExample()
+            # else:
+            #     output_text += "\n Consulta Invalida!"
+            #     self.pixmap.load("")
+            #     self.label.setPixmap(self.pixmap)
+            algebral_relacional_procesed_input = Parser.sql_to_relational_algebra(input_text)
+            print(algebral_relacional_procesed_input)
+            self.generateGraphExample(algebral_relacional_procesed_input)
+            self.input_box.clear()
+            self.output_box.append(output_text)
+        except Exception as e:
+            self.input_box.clear()
+            self.output_box.append(str(e))
             self.pixmap.load("")
             self.label.setPixmap(self.pixmap)
-        self.output_box.append(output_text)
-        self.input_box.clear()
 
-    def generateGraphExample(self):
-        inputString = "Pi Tb1.Nome, tb3.sal ( ((( (Pi Pk, nome(Sigma tb1.id > 300(Tb1))) |X| Tb1.pk = tb2.fk (Pi Pk,fk(Tb2))) |X| tb2.pk = tb3.fk (Pi Sal, fk((Sigma tb3.sal <> 0 (Tb3)))))))"
+    def generateGraphExample(self, inputString):
+        #inputString = "Pi Tb1.Nome, tb3.sal ( ((( (Pi Pk, nome(Sigma tb1.id > 300(Tb1))) |X| Tb1.pk = tb2.fk (Pi Pk,fk(Tb2))) |X| tb2.pk = tb3.fk (Pi Sal, fk((Sigma tb3.sal <> 0 (Tb3)))))))"
         #inputString = "( (A(B(C))) D (E(F))) G (H((I (J))))"
         
        
