@@ -65,7 +65,8 @@ class SQLParser:
                 tables.append(self.tokens[i])
             i += 1
             if i > len(self.tokens) -1:
-                return From(tables)
+                break
+                #return From(tables)
         self.parse_tables(tables)
         return From(tables)
 
