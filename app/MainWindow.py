@@ -19,7 +19,7 @@ class MainWindow(QWidget):
         super().__init__()
 
         self.sql_query = ""
-        
+        self.queryTree = None
         # Criando a caixa de texto de entrada
         self.input_box = QLineEdit()
         
@@ -69,26 +69,25 @@ class MainWindow(QWidget):
             #     self.pixmap.load("")
             #     self.label.setPixmap(self.pixmap)
             algebral_relacional_procesed_input = Parser.sql_to_relational_algebra(input_text)
-            print(algebral_relacional_procesed_input)
+            #print(algebral_relacional_procesed_input)
             self.generateGraphExample(algebral_relacional_procesed_input)
+            output_text += "\nOrdem de execucao de consulta: " + str(self.queryTree.ordemDeExecucao())
             self.input_box.clear()
+            self.output_box.clear()
             self.output_box.append(output_text)
+
         except Exception as e:
             self.input_box.clear()
             self.output_box.append(str(e))
             self.pixmap.load("")
             self.label.setPixmap(self.pixmap)
 
-    def generateGraphExample(self, inputString):
-        #inputString = "Pi Tb1.Nome, tb3.sal ( ((( (Pi Pk, nome(Sigma tb1.id > 300(Tb1))) |X| Tb1.pk = tb2.fk (Pi Pk,fk(Tb2))) |X| tb2.pk = tb3.fk (Pi Sal, fk((Sigma tb3.sal <> 0 (Tb3)))))))"
-        #inputString = "( (A(B(C))) D (E(F))) G (H((I (J))))"
-        
-       
-        
+    def generateGraphExample(self, inputString):     
         # Specify the output path
         output_path = './app/RelationalTree'
         # Create a TreeGraph object, generate and export the graph as 'RelationalTree.png'
         tree = TreeGraph(inputString, output_path)
+        self.queryTree = tree.tree
         #tree.generate_tree()
         tree.generate_queryTree()
         #Update GUI image

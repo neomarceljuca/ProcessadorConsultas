@@ -77,6 +77,7 @@ class TreeGraph:
             if trimmedExpression == "":
                 return None
             createdNode = TreeNode(trimmedExpression)
+            self.tree.size += 1
             if self.tree.get_root() == None:
                 self.tree.set_root(createdNode)
             for remainderString in remainder:
@@ -106,9 +107,12 @@ class TreeNode:
 
 
 class Tree:
+    
     def __init__(self, root=None):
         self.root = root
-    
+        if root == None:
+            self.size = 0
+        else: self.size = 1
     def set_root(self, node):
         self.root = node
     
@@ -125,6 +129,35 @@ class Tree:
         children = node.get_children()
         for child in children:
             self._depth_first_traversal(child, visited)
+
+    def ordemDeExecucao(self):
+        return self._postOrder(self.get_root())
+
+
+    def _postOrder(self, current_node):
+        nodes = []
+        for child in current_node.get_children():
+            nodes = nodes + self._postOrder(child)
+        return nodes + [current_node.get_value()]
+        #print(current_node.get_value()  + " ")
+
+
+
+    def levelOrder(self, rootNode):
+        if rootNode == None:
+            return
+        queue = []
+        i = 0
+        queue.append(rootNode)
+
+        while len(queue) > 0:
+            i = i + 1 
+            currNode = queue.pop(0)
+            print(str(i) + ": " + currNode.get_value())
+            if len(currNode.get_children()) > 1 and currNode.get_children()[1] != None:
+                queue.append(currNode.get_children()[1])
+            if len(currNode.get_children()) > 0 and currNode.get_children()[0] != None:
+                queue.append(currNode.get_children()[0])
 
     def to_dot(self):
         # Example list of nodes
