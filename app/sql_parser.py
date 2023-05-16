@@ -24,6 +24,7 @@ table_fields ={
 class SQLParser:
     def __init__(self, query):
         self.query = query
+        self.fixedQuery = query
         self.tokens = self.tokenize()
         self.default_tokens = ["and"]
         self.comparison_ops = {"=", "<>", "<", "<=", ">", ">=", "in", "not"}
@@ -32,7 +33,8 @@ class SQLParser:
         query = re.sub(r"\s+", " ", self.query).strip().lower()
         tokens = re.findall(r"[\w._\u00C0-\u017F]+|'.*?'|[,=><!]+", query)
         return tokens
-
+    
+    
     def parse(self):
         select = self.parse_select()
         from_ = self.parse_from()
@@ -55,7 +57,7 @@ class SQLParser:
             i += 1
 
 
-        self.parse_columns(columns)
+        columns = self.parse_columns(columns)
         return Select(columns)
 
     def parse_from(self):
@@ -87,6 +89,8 @@ class SQLParser:
                     tablename, col = prop.split(".")
                     if col not in table_fields[tablename]:
                         raise ValueError(f"A coluna {col} não pertence a tabela {tablename}.")
+                elif self.tokens[a-1] == "where":
+                    self.tokens[a] = self.parse_columns([self.tokens[a]])[0]
             if a >= len(self.tokens) -1:
                 break
             a+= 1
@@ -118,10 +122,14 @@ class SQLParser:
 
             conditions.append(condition)
 
+        conditionsIndex = 0
         for c in conditions:
             prop = c[0]
-
-            print(prop)
+            if "." not in prop:
+                c = (self.parse_columns([c[0]])[0], c[1],c[2])
+                print(prop)
+                conditions[conditionsIndex] = c
+            conditionsIndex += 1
         return Where(conditions)
 
     def parse_joins(self):
@@ -162,18 +170,43 @@ class SQLParser:
             else:
                 raise ValueError("Tabela " + table  + " nao encontrada")
             
+    def replace_substring(self, input_string, old_substring, new_substring):
+        pattern = r'(?<!\w)(?<!\.)' + re.escape(old_substring) + r'(?!\w)'
+        modified_string = re.sub(pattern, new_substring, input_string)
+        return modified_string     
 
     def parse_columns(self, columns):
 
         table_field_names = table_fields.keys()
-
+        completeColumns = []
+        tableName = ""
+        # for column in columns:
+        #     column = column.split('.')[1]  if '.' in column else column
+        #     found = False
+        #     for fields in table_fields.values():
+        #         if column.lower()  in fields:
+        #             found = True
+        #     if not found:
+        #         raise ValueError("Campo " + column  + " nao encontrado")  
 
         for column in columns:
-            column = column.split('.')[1]  if '.' in column else column
+            if '.' not in column:   
+                for key, value in table_fields.items():
+                    tableName = ""
+                    if column in value:
+                        tableName = key
+                        
+                        completeColumns.append(tableName + "." + column)
+                        #newFixedQuery = self.fixedQuery.replace(column, tableName + "." + column)
+                        newFixedQuery = self.replace_substring(self.fixedQuery, column, tableName + "." + column)
+                        self.fixedQuery = newFixedQuery
+                        break
+            if tableName == "": raise ValueError("Tabela " + tableName  + " nao possui campo " + column)
             found = False
             for fields in table_fields.values():
                 if column.lower()  in fields:
                     found = True
+
             if not found:
                 raise ValueError("Campo " + column  + " nao encontrado")  
         
@@ -188,6 +221,8 @@ class SQLParser:
                 if col in prop_values:
                         if col not in ["select", "from", "on", "int", "not", "join"]:
                             col = f"{key}.{col}"
+        
+        return completeColumns
                     
 
     def sql_dict_to_relational_algebra(self, sql_dict):

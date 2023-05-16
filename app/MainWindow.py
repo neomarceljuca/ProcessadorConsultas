@@ -11,6 +11,7 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (QApplication, QGraphicsScene, QGraphicsTextItem,
                                QGraphicsView, QLabel, QLineEdit, QPushButton,
                                QTextEdit, QVBoxLayout, QWidget)
+
 from sql_parser import SQLParser
 
 
@@ -68,7 +69,7 @@ class MainWindow(QWidget):
             #     output_text += "\n Consulta Invalida!"
             #     self.pixmap.load("")
             #     self.label.setPixmap(self.pixmap)
-            algebral_relacional_procesed_input = Parser.sql_to_relational_algebra(input_text)
+            algebral_relacional_procesed_input = Parser.sql_to_relational_algebra(parser.fixedQuery)
             #print(algebral_relacional_procesed_input)
             self.generateGraphExample(algebral_relacional_procesed_input)
             output_text += "\nOrdem de execucao de consulta: " + str(self.queryTree.ordemDeExecucao())

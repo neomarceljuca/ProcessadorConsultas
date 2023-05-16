@@ -1,0 +1,24 @@
+// Tree Graph
+digraph {
+	"piusuario.idusuario,usuario.nome,usuario.datanascimento,contas.descricao,contas.saldoinicial,uf,descrição"
+	"|X|tipoconta.idtipoconta=contas.tipoconta_idtipoconta"
+	"|X|usuario.idusuario=contas.usuario_idusuario"
+	"piusuario.idusuario,usuario.nome,usuario.datanascimento,usuario.idusuario,usuario.nome,usuario.datanascimento"
+	"sigmausuario.uf='ce'^usuario.idusuario>3;"
+	usuario
+	"picontas.tipoconta_idtipoconta,contas.usuario_idusuario,contas.descricao,contas.saldoinicial"
+	"sigmacontas.saldoinicial<3000"
+	contas
+	"pitipoconta.idtipoconta"
+	tipoconta
+	"piusuario.idusuario,usuario.nome,usuario.datanascimento,contas.descricao,contas.saldoinicial,uf,descrição" -> "|X|tipoconta.idtipoconta=contas.tipoconta_idtipoconta"
+	"|X|tipoconta.idtipoconta=contas.tipoconta_idtipoconta" -> "|X|usuario.idusuario=contas.usuario_idusuario"
+	"|X|usuario.idusuario=contas.usuario_idusuario" -> "piusuario.idusuario,usuario.nome,usuario.datanascimento,usuario.idusuario,usuario.nome,usuario.datanascimento"
+	"piusuario.idusuario,usuario.nome,usuario.datanascimento,usuario.idusuario,usuario.nome,usuario.datanascimento" -> "sigmausuario.uf='ce'^usuario.idusuario>3;"
+	"sigmausuario.uf='ce'^usuario.idusuario>3;" -> usuario
+	"|X|usuario.idusuario=contas.usuario_idusuario" -> "picontas.tipoconta_idtipoconta,contas.usuario_idusuario,contas.descricao,contas.saldoinicial"
+	"picontas.tipoconta_idtipoconta,contas.usuario_idusuario,contas.descricao,contas.saldoinicial" -> "sigmacontas.saldoinicial<3000"
+	"sigmacontas.saldoinicial<3000" -> contas
+	"|X|tipoconta.idtipoconta=contas.tipoconta_idtipoconta" -> "pitipoconta.idtipoconta"
+	"pitipoconta.idtipoconta" -> tipoconta
+}
