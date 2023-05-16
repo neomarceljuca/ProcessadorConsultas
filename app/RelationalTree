@@ -1,22 +1,6 @@
 // Tree Graph
 digraph {
 	"piidusuario,nome,datanascimento,descricao,saldoinicial,uf,descrição"
-	"|X|tipoconta.idtipoconta=contas.tipoconta_idtipoconta"
-	"|X|usuario.idusuario=contas.usuario_idusuario"
-	"piidusuario,usuario.idusuario"
-	"sigmaidusuario>3;"
 	usuario
-	"picontas.usuario_idusuario,contas.tipoconta_idtipoconta"
-	contas
-	"pitipoconta.idtipoconta"
-	tipoconta
-	"piidusuario,nome,datanascimento,descricao,saldoinicial,uf,descrição" -> "|X|tipoconta.idtipoconta=contas.tipoconta_idtipoconta"
-	"|X|tipoconta.idtipoconta=contas.tipoconta_idtipoconta" -> "|X|usuario.idusuario=contas.usuario_idusuario"
-	"|X|usuario.idusuario=contas.usuario_idusuario" -> "piidusuario,usuario.idusuario"
-	"piidusuario,usuario.idusuario" -> "sigmaidusuario>3;"
-	"sigmaidusuario>3;" -> usuario
-	"|X|usuario.idusuario=contas.usuario_idusuario" -> "picontas.usuario_idusuario,contas.tipoconta_idtipoconta"
-	"picontas.usuario_idusuario,contas.tipoconta_idtipoconta" -> contas
-	"|X|tipoconta.idtipoconta=contas.tipoconta_idtipoconta" -> "pitipoconta.idtipoconta"
-	"pitipoconta.idtipoconta" -> tipoconta
+	"piidusuario,nome,datanascimento,descricao,saldoinicial,uf,descrição" -> usuario
 }

@@ -49,8 +49,11 @@ class SQLParser:
         i = 1
         while self.tokens[i] != "from":
             if self.tokens[i] != "," and self.tokens[i].lower() != "from":
+                    
+                        
                 columns.append(self.tokens[i])
             i += 1
+
 
         self.parse_columns(columns)
         return Select(columns)
@@ -58,6 +61,7 @@ class SQLParser:
     def parse_from(self):
         i = self.tokens.index("from")
         tables = []
+            
 
         while self.tokens[i] not in ("where", "join"):
             if self.tokens[i] != "," and self.tokens[i].lower() != "from":
@@ -71,6 +75,21 @@ class SQLParser:
     def parse_where(self):
         if "where" not in self.tokens:
             return None
+        
+        a = self.tokens.index("where") + 1
+
+        while self.tokens[a] not in ("where", "join"):
+            if a > len(self.tokens) -1:
+                break
+            if self.tokens[a] != "," and self.tokens[a].lower() != "from":
+                prop = self.tokens[a]
+                if "." in prop:
+                    tablename, col = prop.split(".")
+                    if col not in table_fields[tablename]:
+                        raise ValueError(f"A coluna {col} não pertence a tabela {tablename}.")
+            if a >= len(self.tokens) -1:
+                break
+            a+= 1
 
         i = self.tokens.index("where") + 1
         conditions = []
@@ -99,10 +118,25 @@ class SQLParser:
 
             conditions.append(condition)
 
+        for c in conditions:
+            prop = c[0]
+
+            print(prop)
         return Where(conditions)
 
     def parse_joins(self):
         joins = []
+
+        # a = self.tokens.index("where") + 1
+
+        # while self.tokens[a] not in ("where", "join"):
+        #     if self.tokens[a] != "," and self.tokens[a].lower() != "from":
+        #         prop = self.tokens[a]
+        #         if "." in prop:
+        #             tablename, col = prop.split(".")
+        #             if col not in table_fields[tablename]:
+        #                 raise ValueError(f"A coluna {col} não pertence a tabela {tablename}.")
+        #     a+= 1
 
         while "join" in self.tokens:
             i = self.tokens.index("join")
@@ -110,6 +144,14 @@ class SQLParser:
             condition = (self.tokens[i + 3], self.tokens[i + 4], self.tokens[i + 5])
             joins.append(Join(table, condition))
             self.tokens.pop(i)
+
+        for join in joins:
+            cond = join[1]
+            for c in cond:
+                if "." in c:
+                    tablename, col = c.split(".")
+                    if col not in table_fields[tablename]:
+                        raise ValueError(f"A coluna {col} não pertence a tabela {tablename}")
         return joins
     
     def parse_tables(self, tables):
@@ -122,6 +164,10 @@ class SQLParser:
             
 
     def parse_columns(self, columns):
+
+        table_field_names = table_fields.keys()
+
+
         for column in columns:
             column = column.split('.')[1]  if '.' in column else column
             found = False
@@ -130,6 +176,19 @@ class SQLParser:
                     found = True
             if not found:
                 raise ValueError("Campo " + column  + " nao encontrado")  
+        
+        i = 0
+
+        for col in columns:
+            for key in list(table_field_names):
+                if key == "*":
+                    continue
+                prop_values = table_fields[key]
+
+                if col in prop_values:
+                        if col not in ["select", "from", "on", "int", "not", "join"]:
+                            col = f"{key}.{col}"
+                    
 
     def sql_dict_to_relational_algebra(self, sql_dict):
         select = sql_dict.get('select')

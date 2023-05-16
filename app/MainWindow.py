@@ -60,7 +60,7 @@ class MainWindow(QWidget):
             parsed_query = parser.parse()
 
             self.output_box.clear()
-            output_text = "Você digitou: {}".format(input_text)
+            output_text = "Você digitou: {}".format(parsed_query)
             # if validated:
             #     output_text += "\n Consulta Validada"
             #     self.generateGraphExample()
@@ -68,9 +68,10 @@ class MainWindow(QWidget):
             #     output_text += "\n Consulta Invalida!"
             #     self.pixmap.load("")
             #     self.label.setPixmap(self.pixmap)
-            algebral_relacional_procesed_input = Parser.sql_to_relational_algebra(input_text)
+            parsed_input = input_text.replace("\n", " ")
+            algebral_relacional_procesed_input = Parser.sql_to_relational_algebra(parsed_input)
             print(algebral_relacional_procesed_input)
-            self.generateGraphExample(algebral_relacional_procesed_input)
+            # self.generateGraphExample(algebral_relacional_procesed_input)
             self.input_box.clear()
             self.output_box.append(output_text)
         except Exception as e:
